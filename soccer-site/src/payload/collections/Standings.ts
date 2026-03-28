@@ -3,33 +3,28 @@ import type { CollectionConfig } from 'payload'
 export const Standings: CollectionConfig = {
   slug: 'standings',
   admin: {
-    useAsTitle: 'teamName',
+    useAsTitle: 'title',
   },
   access: {
     read: () => true,
   },
   fields: [
     {
-      name: 'teamName',
+      name: 'title',
       type: 'text',
-      admin: {
-        hidden: true,
-      },
+      admin: { hidden: true },
       hooks: {
         beforeChange: [
           ({ data }) => {
-            if (data?.team) {
-              return `Team ID: ${data.team}` // For simple display, or we could fetch team name via hook
-            }
-            return 'New Standing'
-          },
-        ],
-      },
+            return `Standing: ${data?.projectteam}`
+          }
+        ]
+      }
     },
     {
-      name: 'team',
+      name: 'projectteam',
       type: 'relationship',
-      relationTo: 'teams',
+      relationTo: 'project-teams',
       required: true,
       unique: true,
     },

@@ -28,7 +28,8 @@ export default async function StandingsTable() {
         </thead>
         <tbody>
           {standingsReq.docs.map((row: any, index: number) => {
-            const team = row.team as any
+            const pteam = row.projectteam as any
+            const team = pteam?.team
             const isTop = index < 3;
             const isBottom = index > standingsReq.docs.length - 4;
 

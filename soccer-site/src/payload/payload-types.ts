@@ -69,11 +69,20 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    clubs: Club;
     teams: Team;
-    players: Player;
+    seasons: Season;
+    leagues: League;
+    projects: Project;
+    'project-teams': ProjectTeam;
+    matchdays: Matchday;
     matches: Match;
-    news: News;
+    venues: Venue;
+    persons: Person;
+    'team-players': TeamPlayer;
+    'match-events': MatchEvent;
     standings: Standing;
+    news: News;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,11 +92,20 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    clubs: ClubsSelect<false> | ClubsSelect<true>;
     teams: TeamsSelect<false> | TeamsSelect<true>;
-    players: PlayersSelect<false> | PlayersSelect<true>;
+    seasons: SeasonsSelect<false> | SeasonsSelect<true>;
+    leagues: LeaguesSelect<false> | LeaguesSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'project-teams': ProjectTeamsSelect<false> | ProjectTeamsSelect<true>;
+    matchdays: MatchdaysSelect<false> | MatchdaysSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
-    news: NewsSelect<false> | NewsSelect<true>;
+    venues: VenuesSelect<false> | VenuesSelect<true>;
+    persons: PersonsSelect<false> | PersonsSelect<true>;
+    'team-players': TeamPlayersSelect<false> | TeamPlayersSelect<true>;
+    'match-events': MatchEventsSelect<false> | MatchEventsSelect<true>;
     standings: StandingsSelect<false> | StandingsSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -187,26 +205,99 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "teams".
+ * via the `definition` "clubs".
  */
-export interface Team {
+export interface Club {
   id: string;
   name: string;
+  alias?: string | null;
+  founded_year?: string | null;
   logo?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "players".
+ * via the `definition` "teams".
  */
-export interface Player {
+export interface Team {
+  id: string;
+  club: string | Club;
+  name: string;
+  short_name?: string | null;
+  middle_name?: string | null;
+  alias?: string | null;
+  info?: string | null;
+  notes?: string | null;
+  picture?: (string | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons".
+ */
+export interface Season {
   id: string;
   name: string;
-  number: number;
-  position: 'goalkeeper' | 'defender' | 'midfielder' | 'forward';
+  alias?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leagues".
+ */
+export interface League {
+  id: string;
+  name: string;
+  alias?: string | null;
+  short_name?: string | null;
+  country?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: string;
+  name: string;
+  alias?: string | null;
+  league: string | League;
+  season: string | Season;
+  project_type: 'SIMPLE_LEAGUE' | 'DIVISIONS_LEAGUE' | 'TOURNAMENT_MODE' | 'FRIENDLY_MATCHES';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-teams".
+ */
+export interface ProjectTeam {
+  id: string;
+  title?: string | null;
+  project: string | Project;
   team: string | Team;
-  image?: (string | null) | Media;
+  points_won?: number | null;
+  points_drawn?: number | null;
+  points_lost?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "matchdays".
+ */
+export interface Matchday {
+  id: string;
+  name: string;
+  project: string | Project;
+  roundcode?: number | null;
+  round_date_first?: string | null;
+  round_date_last?: string | null;
+  ordering?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -217,12 +308,92 @@ export interface Player {
 export interface Match {
   id: string;
   title?: string | null;
-  date: string;
-  homeTeam: string | Team;
-  awayTeam: string | Team;
-  homeScore?: number | null;
-  awayScore?: number | null;
-  status: 'upcoming' | 'live' | 'finished';
+  matchday: string | Matchday;
+  match_number?: string | null;
+  projectteam1: string | ProjectTeam;
+  projectteam2: string | ProjectTeam;
+  venue?: (string | null) | Venue;
+  match_date: string;
+  team1_result?: number | null;
+  team2_result?: number | null;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues".
+ */
+export interface Venue {
+  id: string;
+  name: string;
+  club?: (string | null) | Club;
+  capacity?: number | null;
+  address?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "persons".
+ */
+export interface Person {
+  id: string;
+  firstname: string;
+  lastname: string;
+  nickname?: string | null;
+  birthday?: string | null;
+  picture?: (string | null) | Media;
+  country?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-players".
+ */
+export interface TeamPlayer {
+  id: string;
+  title?: string | null;
+  projectteam: string | ProjectTeam;
+  person: string | Person;
+  jersey_number?: number | null;
+  market_value?: number | null;
+  injury?: number | null;
+  suspension?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-events".
+ */
+export interface MatchEvent {
+  id: string;
+  match: string | Match;
+  projectteam: string | ProjectTeam;
+  person: string | Person;
+  event_type: 'GOAL' | 'YELLOW_CARD' | 'RED_CARD' | 'SUBSTITUTION';
+  event_time: number;
+  event_sum?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "standings".
+ */
+export interface Standing {
+  id: string;
+  title?: string | null;
+  projectteam: string | ProjectTeam;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  points?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -251,24 +422,6 @@ export interface News {
     };
     [k: string]: unknown;
   };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "standings".
- */
-export interface Standing {
-  id: string;
-  teamName?: string | null;
-  team: string | Team;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  points?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -305,24 +458,60 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
+        relationTo: 'clubs';
+        value: string | Club;
+      } | null)
+    | ({
         relationTo: 'teams';
         value: string | Team;
       } | null)
     | ({
-        relationTo: 'players';
-        value: string | Player;
+        relationTo: 'seasons';
+        value: string | Season;
+      } | null)
+    | ({
+        relationTo: 'leagues';
+        value: string | League;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: string | Project;
+      } | null)
+    | ({
+        relationTo: 'project-teams';
+        value: string | ProjectTeam;
+      } | null)
+    | ({
+        relationTo: 'matchdays';
+        value: string | Matchday;
       } | null)
     | ({
         relationTo: 'matches';
         value: string | Match;
       } | null)
     | ({
-        relationTo: 'news';
-        value: string | News;
+        relationTo: 'venues';
+        value: string | Venue;
+      } | null)
+    | ({
+        relationTo: 'persons';
+        value: string | Person;
+      } | null)
+    | ({
+        relationTo: 'team-players';
+        value: string | TeamPlayer;
+      } | null)
+    | ({
+        relationTo: 'match-events';
+        value: string | MatchEvent;
       } | null)
     | ({
         relationTo: 'standings';
         value: string | Standing;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: string | News;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -422,24 +611,92 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "teams_select".
+ * via the `definition` "clubs_select".
  */
-export interface TeamsSelect<T extends boolean = true> {
+export interface ClubsSelect<T extends boolean = true> {
   name?: T;
+  alias?: T;
+  founded_year?: T;
   logo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "players_select".
+ * via the `definition` "teams_select".
  */
-export interface PlayersSelect<T extends boolean = true> {
+export interface TeamsSelect<T extends boolean = true> {
+  club?: T;
   name?: T;
-  number?: T;
-  position?: T;
+  short_name?: T;
+  middle_name?: T;
+  alias?: T;
+  info?: T;
+  notes?: T;
+  picture?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons_select".
+ */
+export interface SeasonsSelect<T extends boolean = true> {
+  name?: T;
+  alias?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leagues_select".
+ */
+export interface LeaguesSelect<T extends boolean = true> {
+  name?: T;
+  alias?: T;
+  short_name?: T;
+  country?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  name?: T;
+  alias?: T;
+  league?: T;
+  season?: T;
+  project_type?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-teams_select".
+ */
+export interface ProjectTeamsSelect<T extends boolean = true> {
+  title?: T;
+  project?: T;
   team?: T;
-  image?: T;
+  points_won?: T;
+  points_drawn?: T;
+  points_lost?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "matchdays_select".
+ */
+export interface MatchdaysSelect<T extends boolean = true> {
+  name?: T;
+  project?: T;
+  roundcode?: T;
+  round_date_first?: T;
+  round_date_last?: T;
+  ordering?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -449,12 +706,87 @@ export interface PlayersSelect<T extends boolean = true> {
  */
 export interface MatchesSelect<T extends boolean = true> {
   title?: T;
-  date?: T;
-  homeTeam?: T;
-  awayTeam?: T;
-  homeScore?: T;
-  awayScore?: T;
-  status?: T;
+  matchday?: T;
+  match_number?: T;
+  projectteam1?: T;
+  projectteam2?: T;
+  venue?: T;
+  match_date?: T;
+  team1_result?: T;
+  team2_result?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues_select".
+ */
+export interface VenuesSelect<T extends boolean = true> {
+  name?: T;
+  club?: T;
+  capacity?: T;
+  address?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "persons_select".
+ */
+export interface PersonsSelect<T extends boolean = true> {
+  firstname?: T;
+  lastname?: T;
+  nickname?: T;
+  birthday?: T;
+  picture?: T;
+  country?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-players_select".
+ */
+export interface TeamPlayersSelect<T extends boolean = true> {
+  title?: T;
+  projectteam?: T;
+  person?: T;
+  jersey_number?: T;
+  market_value?: T;
+  injury?: T;
+  suspension?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "match-events_select".
+ */
+export interface MatchEventsSelect<T extends boolean = true> {
+  match?: T;
+  projectteam?: T;
+  person?: T;
+  event_type?: T;
+  event_time?: T;
+  event_sum?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "standings_select".
+ */
+export interface StandingsSelect<T extends boolean = true> {
+  title?: T;
+  projectteam?: T;
+  played?: T;
+  won?: T;
+  drawn?: T;
+  lost?: T;
+  goalsFor?: T;
+  goalsAgainst?: T;
+  points?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -468,23 +800,6 @@ export interface NewsSelect<T extends boolean = true> {
   category?: T;
   image?: T;
   content?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "standings_select".
- */
-export interface StandingsSelect<T extends boolean = true> {
-  teamName?: T;
-  team?: T;
-  played?: T;
-  won?: T;
-  drawn?: T;
-  lost?: T;
-  goalsFor?: T;
-  goalsAgainst?: T;
-  points?: T;
   updatedAt?: T;
   createdAt?: T;
 }
